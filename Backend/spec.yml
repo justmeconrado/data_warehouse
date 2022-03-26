@@ -1,0 +1,1826 @@
+swagger: "2.0"
+info:
+  description: "Contact management system for a Marketing company. This REST API allows to add, cancel, modify and obtain information about a contact database."
+  version: "1.0.0"
+  title: "Data Warehouse"
+  contact:
+    email: "conradovargas93@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost"
+basePath: "/v2"
+tags:
+  - name: "users"
+    description: "Operations corresponding to users"
+  - name: "regions"
+    description: "Access to regions, countries and cities"
+  - name: "countries"
+    description: "Access to regions, countries and cities"
+  - name: "cities"
+    description: "Access to regions, countries and cities"
+  - name: "companies"
+    description: "Access to companies"
+  - name: "contacts"
+    description: "Operations corresponding to contacts"
+  - name: "channels"
+    description: "Access to channels"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /users:
+    get:
+      tags:
+        - "users"
+      summary: "Returns the list of all users"
+      description: ""
+      operationId: "getUsers"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authentication token with administrator role"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        "403":
+          description: "Unauthorized"
+  /users/login:
+    post:
+      tags:
+        - "users"
+      summary: "Log In"
+      description: ""
+      operationId: "loginUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "User object <br> Username field:  enter your email"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginUser"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Token"
+        "400":
+          description: "Bad request"
+  /users/register:
+    post:
+      tags:
+        - "users"
+      summary: "Creates a new user"
+      description: ""
+      operationId: "createUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authentication token with administrator role"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "User object to create <br> Password format: minimum 4 characters, maximum 15 characters, at least 1 character, at least 1 digit, no blank spaces"
+          required: true
+          schema:
+            $ref: "#/definitions/NewUser"
+      responses:
+        "201":
+          description: "User successfully created"
+          schema:
+            $ref: "#/definitions/UserCreated"
+        "400":
+          description: "Bad request"
+        "403":
+          description: "Unauthorized"
+        "409":
+          description: "The email already exists"
+  /users/{userId}:
+    get:
+      tags:
+        - "users"
+      summary: "Returns user information"
+      description: ""
+      operationId: "getInfoUser"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "userId"
+          description: "User Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "User not found"
+    put:
+      tags:
+        - "users"
+      summary: "Modifies an user"
+      description: ""
+      operationId: "updateUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "userId"
+          description: "User Id to modify"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "User modified"
+          required: true
+          schema:
+            $ref: "#/definitions/NewUser"
+      responses:
+        "200":
+          description: "User successfully modified"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "User not found"
+    delete:
+      tags:
+        - "users"
+      summary: "Deletes an user"
+      description: ""
+      operationId: "deleteUser"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authentication token with administrator role"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "userId"
+          description: "User Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "User successfully removed"
+          schema:
+            $ref: "#/definitions/User"
+        "403":
+          description: "Unauthorized"
+        "404":
+          description: "User not found"
+  /regions:
+    get:
+      tags:
+        - "regions"
+      summary: "Returns the list of all regions"
+      description: ""
+      operationId: "getRegions"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Region"
+        "401":
+          description: "Unauthorized"
+    post:
+      tags:
+        - "regions"
+      summary: "Creates a new region"
+      description: ""
+      operationId: "createRegion"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Region object to create"
+          required: true
+          schema:
+            $ref: "#/definitions/NewRegion"
+      responses:
+        "201":
+          description: "Region successfully created"
+          schema:
+            $ref: "#/definitions/Region"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "409":
+          description: "The region already exists"
+  /regions/{regionId}:
+    get:
+      tags:
+        - "regions"
+      summary: "Returns a region"
+      description: ""
+      operationId: "getRegion"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "regionId"
+          description: "Region Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Region"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Region not found"
+    put:
+      tags:
+        - "regions"
+      summary: "Modifies a region"
+      description: ""
+      operationId: "updateRegion"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "regionId"
+          description: "Region Id to modify"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Region modified"
+          required: true
+          schema:
+            $ref: "#/definitions/NewRegion"
+      responses:
+        "200":
+          description: "Region successfully modified"
+          schema:
+            $ref: "#/definitions/Region"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Region not found"
+        "409":
+          description: "The region already exists"
+    delete:
+      tags:
+        - "regions"
+      summary: "Deletes a region"
+      description: ""
+      operationId: "deleteRegion"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "regionId"
+          description: "Region Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Region successfully removed"
+          schema:
+            $ref: "#/definitions/Region"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Region not found"
+  /regions/{regionId}/countries:
+    get:
+      tags:
+        - "regions"
+      summary: "Returns countries of a region"
+      description: ""
+      operationId: "getCountriesRegion"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "regionId"
+          description: "Region Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Country"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Region not found"
+  /regions/{regionId}/cities:
+    get:
+      tags:
+        - "regions"
+      summary: "Returns cities of a region"
+      description: ""
+      operationId: "getCitiesRegion"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "regionId"
+          description: "Region Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CitiesRegion"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Region not found"
+  /regionsCountriesCities:
+    get:
+      tags:
+        - "regions"
+      summary: "Returns the complete list of regions, countries and cities"
+      description: ""
+      operationId: "getReCoCi"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Regions"
+        "401":
+          description: "Unauthorized"
+  /countries:
+    get:
+      tags:
+        - "countries"
+      summary: "Returns the list of all countries"
+      description: ""
+      operationId: "getCountries"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Country"
+        "401":
+          description: "Unauthorized"
+    post:
+      tags:
+        - "countries"
+      summary: "Creates a new country"
+      description: ""
+      operationId: "createCountry"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Country object to create"
+          required: true
+          schema:
+            $ref: "#/definitions/NewCountry"
+      responses:
+        "201":
+          description: "Country successfully created"
+          schema:
+            $ref: "#/definitions/Country"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Region not found"
+        "409":
+          description: "The country already exists"
+  /countries/{countryId}:
+    get:
+      tags:
+        - "countries"
+      summary: "Returns a country"
+      description: ""
+      operationId: "getCountry"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "countryId"
+          description: "Country Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Country"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Country not found"
+    put:
+      tags:
+        - "countries"
+      summary: "Modifies a country"
+      description: ""
+      operationId: "updateCountry"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "countryId"
+          description: "Country Id to modify"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Country modified"
+          required: true
+          schema:
+            $ref: "#/definitions/NewCountry"
+      responses:
+        "200":
+          description: "Country successfully modified"
+          schema:
+            $ref: "#/definitions/Country"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Country or region not found"
+        "409":
+          description: "The country already exists"
+    delete:
+      tags:
+        - "countries"
+      summary: "Deletes a country"
+      description: ""
+      operationId: "deleteCountry"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "countryId"
+          description: "Country Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Country successfully removed"
+          schema:
+            $ref: "#/definitions/Country"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Country not found"
+  /countries/{countryId}/cities:
+    get:
+      tags:
+        - "countries"
+      summary: "Returns cities of a country"
+      description: ""
+      operationId: "getCitiesCountry"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "countryId"
+          description: "Country Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/City"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Country not found"
+  /cities:
+    get:
+      tags:
+        - "cities"
+      summary: "Returns the list of all cities"
+      description: ""
+      operationId: "getCities"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/City"
+        "401":
+          description: "Unauthorized"
+    post:
+      tags:
+        - "cities"
+      summary: "Creates a new city"
+      description: ""
+      operationId: "createCity"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "City object to create"
+          required: true
+          schema:
+            $ref: "#/definitions/NewCity"
+      responses:
+        "201":
+          description: "City successfully created"
+          schema:
+            $ref: "#/definitions/City"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Country not found"
+        "409":
+          description: "The city already exists"
+  /cities/{cityId}:
+    get:
+      tags:
+        - "cities"
+      summary: "Returns a city"
+      description: ""
+      operationId: "getCity"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "cityId"
+          description: "City Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/City"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "City not found"
+    put:
+      tags:
+        - "cities"
+      summary: "Modifies a city"
+      description: ""
+      operationId: "updateCity"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "cityId"
+          description: "City Id to modify"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "City modified"
+          required: true
+          schema:
+            $ref: "#/definitions/NewCity"
+      responses:
+        "200":
+          description: "City successfully modified"
+          schema:
+            $ref: "#/definitions/City"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "City or country not found"
+        "409":
+          description: "The city already exists"
+    delete:
+      tags:
+        - "cities"
+      summary: "Deletes a city"
+      description: ""
+      operationId: "deleteCity"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "cityId"
+          description: "City Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "City successfully removed"
+          schema:
+            $ref: "#/definitions/City"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "City not found"
+  /companies:
+    get:
+      tags:
+        - "companies"
+      summary: "Returns the list of all companies"
+      description: ""
+      operationId: "getCompanies"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Company"
+        "401":
+          description: "Unauthorized"
+    post:
+      tags:
+        - "companies"
+      summary: "Creates a new company"
+      description: ""
+      operationId: "createCompany"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Company object to create"
+          required: true
+          schema:
+            $ref: "#/definitions/NewCompany"
+      responses:
+        "201":
+          description: "Company successfully created"
+          schema:
+            $ref: "#/definitions/Company"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Company or city not found"
+  /companies/{companyId}:
+    get:
+      tags:
+        - "companies"
+      summary: "Returns a company"
+      description: ""
+      operationId: "getCompany"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "companyId"
+          description: "Company Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Company"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Company not found"
+    put:
+      tags:
+        - "companies"
+      summary: "Modifies a company"
+      description: ""
+      operationId: "updateCompany"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "companyId"
+          description: "Company Id to modify"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Company modified"
+          required: true
+          schema:
+            $ref: "#/definitions/NewCompany"
+      responses:
+        "200":
+          description: "Company successfully modified"
+          schema:
+            $ref: "#/definitions/Company"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Company or city not found"
+    delete:
+      tags:
+        - "companies"
+      summary: "Deletes a company"
+      description: ""
+      operationId: "deleteCompany"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "companyId"
+          description: "Company Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Company successfully removed"
+          schema:
+            $ref: "#/definitions/Company"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Company not found"
+  /contacts:
+    get:
+      tags:
+        - "contacts"
+      summary: "Returns the list of all contacts"
+      description: ""
+      operationId: "getContacts"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Contact"
+        "401":
+          description: "Unauthorized"
+    post:
+      tags:
+        - "contacts"
+      summary: "Creates a new contact"
+      description: ""
+      operationId: "createContact"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Contact object to create"
+          required: true
+          schema:
+            $ref: "#/definitions/NewContact"
+      responses:
+        "201":
+          description: "Contact successfully created"
+          schema:
+            $ref: "#/definitions/Contact"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "City or company not found"
+        "409":
+          description: "The email already exists"
+  /contacts/{contactId}:
+    get:
+      tags:
+        - "contacts"
+      summary: "Returns a contact"
+      description: ""
+      operationId: "getContact"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "contactId"
+          description: "Contact Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Contact"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Contact not found"
+    put:
+      tags:
+        - "contacts"
+      summary: "Modifies a contact"
+      description: ""
+      operationId: "updateContact"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "contactId"
+          description: "Contact Id to modify"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Contact modified"
+          required: true
+          schema:
+            $ref: "#/definitions/NewContact"
+      responses:
+        "200":
+          description: "Contact successfully modified"
+          schema:
+            $ref: "#/definitions/Contact"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Contact not found"
+        "409":
+          description: "The email already exists"
+    delete:
+      tags:
+        - "contacts"
+      summary: "Deletes a contact"
+      description: ""
+      operationId: "deleteContact"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "contactId"
+          description: "Contact Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Contact successfully removed"
+          schema:
+            $ref: "#/definitions/ContactDeleted"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Contact not found"
+  /contacts/{contactId}/channels:
+    post:
+      tags:
+        - "contacts"
+      summary: "Adds a channel to a contact"
+      description: ""
+      operationId: "addChannel"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "contactId"
+          description: "Contact Id"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Channel object to add"
+          required: true
+          schema:
+            $ref: "#/definitions/AddChannel"
+      responses:
+        "201":
+          description: "Channel successfully added"
+          schema:
+            $ref: "#/definitions/ChannelsContact"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Contact not found"
+  /contacts/{contactId}/channels/{channelId}:
+    delete:
+      tags:
+        - "contacts"
+      summary: "Deletes a channel from a contact"
+      description: ""
+      operationId: "deleteChannelContact"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "contactId"
+          description: "Contact Id"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "channelId"
+          description: "channel Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Channel successfully removed"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Contact or channel not found"
+  /search:
+    get:
+      tags:
+        - "contacts"
+      summary: "Returns search results"
+      description: ""
+      operationId: "getSearchResults"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Contact"
+        "401":
+          description: "Unauthorized"
+  /channels:
+    get:
+      tags:
+        - "channels"
+      summary: "Returns the list of all channels"
+      description: ""
+      operationId: "getChannels"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Channel"
+        "401":
+          description: "Unauthorized"
+    post:
+      tags:
+        - "channels"
+      summary: "Creates a new channel"
+      description: ""
+      operationId: "createChannel"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Channel object to create"
+          required: true
+          schema:
+            $ref: "#/definitions/NewChannel"
+      responses:
+        "201":
+          description: "Channel successfully created"
+          schema:
+            $ref: "#/definitions/Channel"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+  /channels/{channelId}:
+    get:
+      tags:
+        - "channels"
+      summary: "Returns a channel"
+      description: ""
+      operationId: "getChannel"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "channelId"
+          description: "Channel Id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Channel"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Channel not found"
+    put:
+      tags:
+        - "channels"
+      summary: "Modifies a channel"
+      description: ""
+      operationId: "updateChannel"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "channelId"
+          description: "Channel Id to modify"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Channel modified"
+          required: true
+          schema:
+            $ref: "#/definitions/NewChannel"
+      responses:
+        "200":
+          description: "Channel successfully modified"
+          schema:
+            $ref: "#/definitions/Channel"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Channel not found"
+    delete:
+      tags:
+        - "channels"
+      summary: "Deletes a channel"
+      description: ""
+      operationId: "deleteChannel"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Authorization token obtained at logging"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "channelId"
+          description: "Channel Id to delete"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Channel successfully removed"
+          schema:
+            $ref: "#/definitions/Channel"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Channel not found"
+definitions:
+  User:
+    type: "object"
+    properties:
+      user_id:
+        type: "integer"
+        format: "int64"
+        example: 0
+      firstname:
+        type: "string"
+        example: "Conrado"
+      lastname:
+        type: "string"
+        example: "Vargas"
+      email:
+        type: "string"
+        example: "colondesantafe@gmail.com"
+      perfil:
+        type: "string"
+        example: "Admin"
+  NewUser:
+    type: "object"
+    properties:
+      firstname:
+        type: "string"
+        example: "Conrado"
+      lastname:
+        type: "string"
+        example: "Vargas"
+      email:
+        type: "string"
+        example: "colondesantafe@gmail.com"
+      perfil:
+        type: "string"
+        example: "Básico"
+      password:
+        type: "string"
+  UserCreated:
+    type: "object"
+    properties:
+      user_id:
+        type: "integer"
+        format: "int64"
+        example: 7
+      firstname:
+        type: "string"
+        example: "Conrado"
+      lastname:
+        type: "string"
+        example: "Vargas"
+      email:
+        type: "string"
+        example: "colondesantafe@gmail.com"
+      perfil:
+        type: "string"
+        example: "Básico"
+  LoginUser:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+        example: "colondesantafe@gmail.com"
+      password:
+        type: "string"
+  Token:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhbiIsImFkbWluIjoxLCJ1c2VySWQiOjEzLCJpYXQiOjE2MTYwMTMyMDF9.0H4NvoxUs0Nh_V7-Um3uEEVVY-s_2yKUCdf1-JoJQ0"
+      perf:
+        type: "string"
+        example: "Básico"
+  Region:
+    type: "object"
+    properties:
+      region_id:
+        type: "integer"
+        format: "int64"
+        example: 3
+      region_name:
+        type: "string"
+        example: "Sudamérica"
+  Country:
+    type: "object"
+    properties:
+      country_id:
+        type: "integer"
+        format: "int64"
+        example: 5
+      region_id:
+        type: "integer"
+        format: "int64"
+        example: 3
+      country_name:
+        type: "string"
+        example: "Argentina"
+  City:
+    type: "object"
+    properties:
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 5
+      country_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      city_name:
+        type: "string"
+        example: "Santa Fe"
+  CitiesRegion:
+    type: "object"
+    properties:
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 5
+      country_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      region_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      city_name:
+        type: "string"
+        example: "Santa Fe"
+  NewRegion:
+    type: "object"
+    properties:
+      region_name:
+        type: "string"
+        example: "Sudamérica"
+  NewCountry:
+    type: "object"
+    properties:
+      region_id:
+        type: "integer"
+        format: "int64"
+        example: 3
+      country_name:
+        type: "string"
+        example: "Argentina"
+  NewCity:
+    type: "object"
+    properties:
+      country_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      city_name:
+        type: "string"
+        example: "Santa Fe"
+  Regions:
+    type: "object"
+    properties:
+      region_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      region_name:
+        type: "string"
+        example: "Sudamérica"
+      countries:
+        type: "object"
+        example:
+          [
+            {
+              country_id: 1,
+              region_id:: 1,
+              country_name: Argentina,
+              cities: [{ city_id: 1, country_id: 1, city_name: "Santa Fe" }],
+            },
+          ]
+  Company:
+    type: "object"
+    properties:
+      company_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      company_name:
+        type: "string"
+        example: "Acámica"
+      email:
+        type: "string"
+        example: "hola@acamica.com"
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      city_name:
+        type: "string"
+        example: "Buenos Aires"
+      country_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      country_name:
+        type: "string"
+        example: "Argentina"
+      region_id:
+        type: "integer"
+        format: "int64"
+        example: 3
+      region_name:
+        type: "string"
+        example: "Sudamérica"
+      address:
+        type: "string"
+        example: "JJ Paso 3535"
+      telephone:
+        type: "string"
+        example: "342000000"
+  NewCompany:
+    type: "object"
+    properties:
+      company_name:
+        type: "string"
+        example: "hola@acamica.com"
+      email:
+        type: "string"
+        example: "Acámica"
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      address:
+        type: "string"
+        example: "JJ Paso 3535"
+      telephone:
+        type: "string"
+        example: "342000000"
+  Contact:
+    type: "object"
+    properties:
+      contact_id:
+        type: "integer"
+        format: "int64"
+        example: 14
+      firstname:
+        type: "string"
+        example: "Conrado"
+      lastname:
+        type: "string"
+        example: "Vargas"
+      email:
+        type: "string"
+        example: "ConradoVargas@gmail.com"
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 2
+      city_name:
+        type: "string"
+        example: "Santa Fe"
+      country_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      country_name:
+        type: "string"
+        example: "Argentina"
+      region_id:
+        type: "integer"
+        format: "int64"
+        example: 3
+      region_name:
+        type: "string"
+        example: "Sudamérica"
+      address:
+        type: "string"
+        example: "JJ Paso 3535"
+      company_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      company_name:
+        type: "string"
+        example: "Acámica"
+      position:
+        type: "string"
+        example: "UI Designer"
+      interest:
+        type: "integer"
+        format: "int64"
+        example: 100
+      preferred_channels:
+        type: "object"
+        example:
+          [
+            {
+              contact_id: 14,
+              channel_id: 1,
+              user_account: 342000000,
+              preference: Canal favorito,
+              channel: Whatsapp,
+            },
+            {
+              contact_id: 14,
+              channel_id: 2,
+              user_account: https://www.facebook.com/ConradoVargas,
+              preference: No molestar,
+              channel: Facebook,
+            },
+          ]
+  NewContact:
+    type: "object"
+    properties:
+      firstname:
+        type: "string"
+        example: "Conrado"
+      lastname:
+        type: "string"
+        example: "Vargas"
+      email:
+        type: "string"
+        example: "ConradoVargas@gmail.com"
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      address:
+        type: "string"
+        example: "JJ Paso 3535"
+      company_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      position:
+        type: "string"
+        example: "UI Designer"
+      interest:
+        type: "integer"
+        format: "int64"
+        example: 100
+      preferred_channels:
+        type: "object"
+        example:
+          [
+            {
+              channel_id: 1,
+              user_account: 342000000,
+              preference: Canal favorito,
+            },
+            {
+              channel_id: 2,
+              user_account: https://www.facebook.com/ConradoVargas,
+              preference: No molestar,
+            },
+          ]
+  NewContactPut:
+    type: "object"
+    properties:
+      firstname:
+        type: "string"
+        example: "Conrado"
+      lastname:
+        type: "string"
+        example: "Vargas"
+      email:
+        type: "string"
+        example: "ConradoVargas@gmail.com"
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      address:
+        type: "string"
+        example: "JJ Paso 3535"
+      company_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      position:
+        type: "string"
+        example: "UI Designer"
+      interest:
+        type: "integer"
+        format: "int64"
+        example: 100
+  ContactDeleted:
+    type: "object"
+    properties:
+      contact_id:
+        type: "integer"
+        format: "int64"
+        example: 14
+      firstname:
+        type: "string"
+        example: "Conrado"
+      lastname:
+        type: "string"
+        example: "Vargas"
+      email:
+        type: "string"
+        example: "ConradoVargas@gmail.com"
+      city_id:
+        type: "integer"
+        format: "int64"
+        example: 2
+      address:
+        type: "string"
+        example: "HumJJ Paso 3535"
+      company_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      position:
+        type: "string"
+        example: "UI Designer"
+      interest:
+        type: "integer"
+        format: "int64"
+        example: 100
+      preferred_channels:
+        type: "object"
+        example:
+          [
+            {
+              contact_id: 14,
+              channel_id: 1,
+              user_account: 342000000,
+              preference: Canal favorito,
+            },
+            {
+              contact_id: 14,
+              channel_id: 2,
+              user_account: https://www.facebook.com/ConradoVargas,
+              preference: No molestar,
+            },
+          ]
+  AddChannel:
+    type: "object"
+    properties:
+      channel_id:
+        type: "integer"
+        format: "int64"
+        example: 2
+      user_account:
+        type: "string"
+        example: "https://www.facebook.com/ConradoVargas"
+      preference:
+        type: "string"
+        example: "No molestar"
+  ChannelsContact:
+    example:
+      [
+        {
+          contact_id: 14,
+          channel_id: 1,
+          channel_name: Whatsapp,
+          user_account: 342000000,
+          preference: Canal favorito,
+        },
+        {
+          contact_id: 14,
+          channel_id: 2,
+          channel_name: Facebook,
+          user_account: https://www.facebook.com/ConradoVargas,
+          preference: No molestar,
+        },
+      ]
+  Channel:
+    type: "object"
+    properties:
+      channel_id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      channel_name:
+        type: "string"
+        example: "Whatsapp"
+  NewChannel:
+    type: "object"
+    properties:
+      channel_name:
+        type: "string"
+        example: "Whatsapp"
